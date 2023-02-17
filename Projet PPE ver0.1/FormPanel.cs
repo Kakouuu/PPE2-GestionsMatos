@@ -65,7 +65,7 @@ namespace Projet_PPE_ver0._1
             fillCombo();
             fillComboInter();
         }
-
+            
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex == -1)
@@ -107,8 +107,11 @@ namespace Projet_PPE_ver0._1
                 , "Supprimer un client",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {   
                 con.Open();
+                // delete materiel
+                cmd = new SqlCommand("delete from MATERIEL where ID_CLIENT='" + idClient + "'", con);
+                cmd.ExecuteNonQuery();
+                // delete client
                 cmd = new SqlCommand("delete from CLIENT where ID_CLIENT='" + idClient + "'", con);
-                
                 cmd.ExecuteNonQuery();
                 textBoxNomClient.Text = "";
                 textBoxAdresseClient.Text = "";
