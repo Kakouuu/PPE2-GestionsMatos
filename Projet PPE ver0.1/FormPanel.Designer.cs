@@ -298,7 +298,7 @@
             // 
             // dataGridViewClients
             // 
-            this.dataGridViewClients.AllowUserToAddRows = false;
+            this.dataGridViewClients.AllowUserToDeleteRows = false;
             this.dataGridViewClients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -306,6 +306,7 @@
             this.dataGridViewClients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewClients.Location = new System.Drawing.Point(9, 211);
             this.dataGridViewClients.Name = "dataGridViewClients";
+            this.dataGridViewClients.ReadOnly = true;
             this.dataGridViewClients.RowHeadersWidth = 62;
             this.dataGridViewClients.RowTemplate.Height = 28;
             this.dataGridViewClients.Size = new System.Drawing.Size(1352, 592);
@@ -327,6 +328,7 @@
             // 
             // dataGridViewMateriel
             // 
+            this.dataGridViewMateriel.AllowUserToDeleteRows = false;
             this.dataGridViewMateriel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -334,6 +336,7 @@
             this.dataGridViewMateriel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewMateriel.Location = new System.Drawing.Point(9, 370);
             this.dataGridViewMateriel.Name = "dataGridViewMateriel";
+            this.dataGridViewMateriel.ReadOnly = true;
             this.dataGridViewMateriel.RowHeadersWidth = 62;
             this.dataGridViewMateriel.RowTemplate.Height = 28;
             this.dataGridViewMateriel.Size = new System.Drawing.Size(1352, 433);
@@ -400,7 +403,7 @@
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10.97235F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.54011F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 85F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 180F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 183F));
             this.tableLayoutPanel2.Controls.Add(this.textBoxNomMateriel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.label5, 4, 0);
@@ -430,7 +433,7 @@
             this.textBoxNomMateriel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxNomMateriel.Location = new System.Drawing.Point(90, 38);
             this.textBoxNomMateriel.Name = "textBoxNomMateriel";
-            this.textBoxNomMateriel.Size = new System.Drawing.Size(245, 30);
+            this.textBoxNomMateriel.Size = new System.Drawing.Size(244, 30);
             this.textBoxNomMateriel.TabIndex = 0;
             // 
             // label4
@@ -449,7 +452,7 @@
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(683, 40);
+            this.label5.Location = new System.Drawing.Point(681, 40);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(115, 25);
             this.label5.TabIndex = 7;
@@ -459,7 +462,7 @@
             // 
             this.dateTimePicker1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.dateTimePicker1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dateTimePicker1.Location = new System.Drawing.Point(804, 38);
+            this.dateTimePicker1.Location = new System.Drawing.Point(802, 38);
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(298, 30);
             this.dateTimePicker1.TabIndex = 18;
@@ -468,9 +471,9 @@
             // 
             this.textBoxNoSerieMateriel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxNoSerieMateriel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxNoSerieMateriel.Location = new System.Drawing.Point(451, 38);
+            this.textBoxNoSerieMateriel.Location = new System.Drawing.Point(450, 38);
             this.textBoxNoSerieMateriel.Name = "textBoxNoSerieMateriel";
-            this.textBoxNoSerieMateriel.Size = new System.Drawing.Size(226, 30);
+            this.textBoxNoSerieMateriel.Size = new System.Drawing.Size(225, 30);
             this.textBoxNoSerieMateriel.TabIndex = 2;
             // 
             // label6
@@ -478,7 +481,7 @@
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(341, 40);
+            this.label6.Location = new System.Drawing.Point(340, 40);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(104, 25);
             this.label6.TabIndex = 3;
@@ -489,7 +492,7 @@
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(1108, 40);
+            this.label2.Location = new System.Drawing.Point(1106, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 25);
             this.label2.TabIndex = 12;
@@ -511,7 +514,7 @@
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(683, 148);
+            this.label9.Location = new System.Drawing.Point(681, 148);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(115, 25);
             this.label9.TabIndex = 16;
@@ -522,7 +525,7 @@
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(341, 148);
+            this.label8.Location = new System.Drawing.Point(340, 148);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(104, 25);
             this.label8.TabIndex = 14;
@@ -532,9 +535,9 @@
             // 
             this.textBoxMarqueMateriel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMarqueMateriel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxMarqueMateriel.Location = new System.Drawing.Point(451, 146);
+            this.textBoxMarqueMateriel.Location = new System.Drawing.Point(450, 146);
             this.textBoxMarqueMateriel.Name = "textBoxMarqueMateriel";
-            this.textBoxMarqueMateriel.Size = new System.Drawing.Size(226, 30);
+            this.textBoxMarqueMateriel.Size = new System.Drawing.Size(225, 30);
             this.textBoxMarqueMateriel.TabIndex = 15;
             // 
             // textBoxTypeMateriel
@@ -543,16 +546,16 @@
             this.textBoxTypeMateriel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxTypeMateriel.Location = new System.Drawing.Point(90, 146);
             this.textBoxTypeMateriel.Name = "textBoxTypeMateriel";
-            this.textBoxTypeMateriel.Size = new System.Drawing.Size(245, 30);
+            this.textBoxTypeMateriel.Size = new System.Drawing.Size(244, 30);
             this.textBoxTypeMateriel.TabIndex = 11;
             // 
             // textBoxMTBFMateriel
             // 
             this.textBoxMTBFMateriel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxMTBFMateriel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxMTBFMateriel.Location = new System.Drawing.Point(1193, 38);
+            this.textBoxMTBFMateriel.Location = new System.Drawing.Point(1191, 38);
             this.textBoxMTBFMateriel.Name = "textBoxMTBFMateriel";
-            this.textBoxMTBFMateriel.Size = new System.Drawing.Size(177, 30);
+            this.textBoxMTBFMateriel.Size = new System.Drawing.Size(179, 30);
             this.textBoxMTBFMateriel.TabIndex = 13;
             // 
             // comboBoxMat
@@ -562,7 +565,7 @@
             this.comboBoxMat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxMat.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.comboBoxMat.FormattingEnabled = true;
-            this.comboBoxMat.Location = new System.Drawing.Point(804, 144);
+            this.comboBoxMat.Location = new System.Drawing.Point(802, 144);
             this.comboBoxMat.Name = "comboBoxMat";
             this.comboBoxMat.Size = new System.Drawing.Size(298, 33);
             this.comboBoxMat.TabIndex = 19;
@@ -581,6 +584,7 @@
             // 
             // dataGridViewIntervention
             // 
+            this.dataGridViewIntervention.AllowUserToDeleteRows = false;
             this.dataGridViewIntervention.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -588,6 +592,7 @@
             this.dataGridViewIntervention.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewIntervention.Location = new System.Drawing.Point(9, 398);
             this.dataGridViewIntervention.Name = "dataGridViewIntervention";
+            this.dataGridViewIntervention.ReadOnly = true;
             this.dataGridViewIntervention.RowHeadersWidth = 62;
             this.dataGridViewIntervention.RowTemplate.Height = 28;
             this.dataGridViewIntervention.Size = new System.Drawing.Size(1352, 405);

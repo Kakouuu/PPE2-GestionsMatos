@@ -47,7 +47,8 @@ namespace Projet_PPE_ver0._1
         public void showdataClient()
         {
             con.Open();
-            adptClient = new SqlDataAdapter("Select ID_CLIENT as ID,Nom as Nom,Adresse as Adresse,Mail as Mail,Tel as Téléphone from CLIENT", con);
+            adptClient = new SqlDataAdapter("Select ID_CLIENT as ID,Nom as Nom,Adresse as " +
+                "Adresse,Mail as Mail,Tel as Téléphone from CLIENT", con);
             dtClient = new DataTable();
             adptClient.Fill(dtClient);
             dataGridViewClients.DataSource = dtClient;
@@ -107,7 +108,7 @@ namespace Projet_PPE_ver0._1
                 , "Supprimer un client",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {   
                 con.Open();
-                // delete materiel
+                // delete materiel linked to client
                 cmd = new SqlCommand("delete from MATERIEL where ID_CLIENT='" + idClient + "'", con);
                 cmd.ExecuteNonQuery();
                 // delete client
@@ -138,7 +139,8 @@ namespace Projet_PPE_ver0._1
             }
             else
             {
-                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" && textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
+                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" && 
+                    textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
                 {
                     Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
                     con.Open();
@@ -164,7 +166,8 @@ namespace Projet_PPE_ver0._1
 
             // check if fields changed
             
-                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" && textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
+                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" &&
+                textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
                 {
                     con.Open();
                     cmd = new SqlCommand("update CLIENT set Nom='" + textBoxNomClient.Text + "',Adresse='" +
@@ -274,7 +277,7 @@ namespace Projet_PPE_ver0._1
                     textBoxMTBFMateriel.Text = "";
                     textBoxTypeMateriel.Text = "";
                     textBoxMarqueMateriel.Text = "";
-                    comboBoxMat.Text = "";
+                    comboBoxMat.SelectedItem = null;
                 }
             }
         }
@@ -289,9 +292,7 @@ namespace Projet_PPE_ver0._1
             int UserExist = (int)check_NoSerie.ExecuteScalar();
             con.Close();
 
-
-
-
+            
             if (UserExist > 0)
             {
                 MessageBox.Show("Ce matériel existe déjà");
@@ -299,7 +300,28 @@ namespace Projet_PPE_ver0._1
             else
             {
 
-                if (textBoxNomMateriel.Text != "" && textBoxNoSerieMateriel.Text != "" && /*textBoxDateInstallMateriel.Text != "" &&*/ textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != "" && textBoxMarqueMateriel.Text != "")
+                if (textBoxNomMateriel.Text != "" && textBoxNoSerieMateriel.Text != "" && 
+                    textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != "" && 
+                    textBoxMarqueMateriel.Text != "" && comboBoxMat.SelectedItem != null)
+                    
+                {
+                    Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
+                    int idClient = selectedClient.ID;
+
+                    con.Open();
+                    cmd = new SqlCommand("insert into MATERIEL(Nom,NoSerie,Date_Install,MTBF,Type,Marque,ID_CLIENT) values('" +
+                        textBoxNomMateriel.Text + "','" + textBoxNoSerieMateriel.Text + "','" +
+                        dateTimePicker1.Value + "','" + textBoxMTBFMateriel.Text + "','" +
+                        textBoxTypeMateriel.Text + "','" + textBoxMarqueMateriel.Text + "','" + idClient + "')", con);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Materiel ajouté");
+                    con.Close();
+                    showdataMateriel();
+                }
+                else
+                {
+                    MessageBox.Show("Veuillez remplir tous les champs");
+                }
                 {
                     Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
                     int idClient = selectedClient.ID;
@@ -323,7 +345,8 @@ namespace Projet_PPE_ver0._1
 
         private void buttonSupprimerMateriel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Voulez vous vraiment supprimer ce matériel ?", "Supprimer un matériel", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Voulez vous vraiment supprimer ce matériel ?", 
+                "Supprimer un matériel", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 con.Open();
                 cmd = new SqlCommand("delete from MATERIEL where ID_MATERIEL='" + idMateriel + "'", con);
@@ -334,7 +357,7 @@ namespace Projet_PPE_ver0._1
                 textBoxMTBFMateriel.Text = "";
                 textBoxTypeMateriel.Text = "";
                 textBoxMarqueMateriel.Text = "";
-                comboBoxMat.Text = "";
+                comboBoxMat.SelectedItem = null;
                 MessageBox.Show("Matériel supprimé");
                 con.Close();
                 showdataMateriel();
@@ -345,9 +368,11 @@ namespace Projet_PPE_ver0._1
 
         private void buttonModifierMateriel_Click(object sender, EventArgs e)
         {
-                if (textBoxNomMateriel.Text != "" && textBoxNoSerieMateriel.Text != "" && /*textBoxDateInstallMateriel.Text != "" &&*/ textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != "" && textBoxMarqueMateriel.Text != "" )
+                if (textBoxNomMateriel.Text != "" && textBoxNoSerieMateriel.Text != "" &&
+                textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != "" &&
+                textBoxMarqueMateriel.Text != "" && comboBoxMat.SelectedItem != null)
+
                 {
-                
                 Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
                 int idClient = selectedClient.ID;
                 
@@ -419,7 +444,7 @@ namespace Projet_PPE_ver0._1
                     dateTimePickerInter.Value = DateTime.Now;
                     textBoxCommentaire.Text = "";
                     textBoxTechnicien.Text= "";
-                    comboBoxInter.Text = "";
+                    comboBoxInter.SelectedItem = null;
                 }
             }
         }
@@ -456,7 +481,8 @@ namespace Projet_PPE_ver0._1
             else
             {
 
-                if (comboBoxInter.Text != "" && textBoxCommentaire.Text != "" &&  textBoxCommentaire.Text != "" && textBoxTechnicien.Text != "")
+                if (comboBoxInter.SelectedItem != null && textBoxCommentaire.Text != "" &&
+                    textBoxCommentaire.Text != "" && textBoxTechnicien.Text != "")
                 {
                     Intervention selectedClient = (Intervention)comboBoxMat.SelectedItem;
                     int idMateriel = selectedClient.ID;
