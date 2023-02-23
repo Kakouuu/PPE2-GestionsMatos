@@ -32,6 +32,7 @@ namespace Projet_PPE_ver0._1
             showdataIntervention();
             fillCombo();
             fillComboInter();
+            fillComboStatut();
         }
         private void FormPanel_Load(object sender, EventArgs e)
         {   
@@ -41,8 +42,10 @@ namespace Projet_PPE_ver0._1
         }
 
 
-        /*
-        ----- START CLIENT PART -----
+        /*  
+            -----------------------------------------------------------------------------------------------
+            ------------------------------------ START CLIENT PART ------------------------------------ 
+            -----------------------------------------------------------------------------------------------
         */
         public void showdataClient()
         {
@@ -62,8 +65,10 @@ namespace Projet_PPE_ver0._1
             showdataIntervention();
             comboBoxMat.Items.Clear();
             comboBoxInter.Items.Clear();
+            comboBoxStatut.Items.Clear();
             fillCombo();
             fillComboInter();
+            fillComboStatut();
         }
             
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -184,16 +189,20 @@ namespace Projet_PPE_ver0._1
                 }
             
         }
-        /*
-        ----- END CLIENT PART -----
+        /*  
+            -----------------------------------------------------------------------------------------------
+            ------------------------------------ END CLIENT PART ------------------------------------ 
+            -----------------------------------------------------------------------------------------------
         */
 
 
 
 
 
-        /*
-        ----- START MATERIEL PART -----
+        /*  
+            -----------------------------------------------------------------------------------------------
+            ------------------------------------ START MATERIEL PART ------------------------------------ 
+            -----------------------------------------------------------------------------------------------
         */
 
 
@@ -207,7 +216,18 @@ namespace Projet_PPE_ver0._1
             
 
         }
-
+        private void buttonRefreshMat_Click(object sender, EventArgs e)
+        {
+            showdataClient();
+            showdataMateriel();
+            showdataIntervention();
+            comboBoxMat.Items.Clear();
+            comboBoxInter.Items.Clear();
+            comboBoxStatut.Items.Clear();
+            fillCombo();
+            fillComboInter();
+            fillComboStatut();
+        }
         public void fillCombo()
         {
             con.Open();
@@ -379,14 +399,18 @@ namespace Projet_PPE_ver0._1
 
 
 
-        /*
-        ----- END MATERIEL PART -----
+        /*  
+            -----------------------------------------------------------------------------------------------
+            ------------------------------------ END MATERIEL PART ------------------------------------ 
+            -----------------------------------------------------------------------------------------------
         */
 
 
 
-        /*
-        ----- START INTERVENTION PART -----
+        /*  
+            -----------------------------------------------------------------------------------------------
+            ------------------------------------ START INTERVENTION PART ------------------------------------ 
+            -----------------------------------------------------------------------------------------------
         */
 
 
@@ -394,12 +418,24 @@ namespace Projet_PPE_ver0._1
         {
             con.Open();
             adptIntervention = new SqlDataAdapter("Select i.ID_INTER as ID_INTER,i.Date_Inter as Date_Inter," +
-                "i.Commentaire as Commentaire,i.Technicien as Technicien," +
+                "i.Commentaire as Commentaire,i.Technicien as Technicien, i.Site as Site, i.Statut as Statut," +
                 "m.Nom as Materiel from INTERVENTION i join MATERIEL m on i.ID_MATERIEL = m.ID_MATERIEL", con);
             dtIntervention = new DataTable();
             adptIntervention.Fill(dtIntervention);
             dataGridViewIntervention.DataSource = dtIntervention;
             con.Close();
+        }
+        private void buttonRefreshInter_Click(object sender, EventArgs e)
+        {
+            showdataClient();
+            showdataMateriel();
+            showdataIntervention();
+            comboBoxMat.Items.Clear();
+            comboBoxInter.Items.Clear();
+            comboBoxStatut.Items.Clear();
+            fillCombo();
+            fillComboInter();
+            fillComboStatut();
         }
 
         private void dataGridViewIntervention_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -418,6 +454,8 @@ namespace Projet_PPE_ver0._1
                     textBoxTechnicien.Text = row.Cells["Technicien"].Value.ToString();
                     dateTimePickerInter.Value = DateTime.Parse(row.Cells["Date_Inter"].Value.ToString());
                     comboBoxInter.Text = row.Cells["Materiel"].Value.ToString();
+                    textBoxSite.Text = row.Cells["Site"].Value.ToString();
+                    comboBoxStatut.Text = row.Cells["Statut"].Value.ToString();
                 }
                 else
                 {
@@ -425,10 +463,20 @@ namespace Projet_PPE_ver0._1
                     textBoxCommentaire.Text = "";
                     textBoxTechnicien.Text= "";
                     comboBoxInter.SelectedItem = null;
+                    textBoxSite.Text = "";
+                    comboBoxStatut.SelectedItem = null;
                 }
             }
         }
 
+        public void fillComboStatut()
+        {
+            comboBoxStatut.Items.Add("En attente");
+            comboBoxStatut.Items.Add("En cours");
+            comboBoxStatut.Items.Add("Terminée"); 
+        }
+
+        
         public void fillComboInter()
         {
             con.Open();
@@ -441,50 +489,113 @@ namespace Projet_PPE_ver0._1
             dal.Fill(dt);
             foreach (DataRow dr in dt.Rows)
             {
-                comboBoxInter.Items.Add(dr["Nom"].ToString());
+                int id = Convert.ToInt32(dr["ID_MATERIEL"].ToString());
+                string nom = dr["Nom"].ToString();
+                string noSerie = dr["NoSerie"].ToString();
+                DateTime dateInstall = DateTime.Parse(dr["Date_Install"].ToString());
+                int MTBF = Convert.ToInt32(dr["MTBF"].ToString());
+                string type = dr["Type"].ToString();
+                string marque = dr["Marque"].ToString();
+                int idClient = Convert.ToInt32(dr["ID_CLIENT"].ToString());
+                
+
+                Inter intervention = new Inter(id, nom, noSerie, dateInstall, MTBF, type, marque, idClient);
+
+
+                comboBoxInter.Items.Add(intervention);
             }
             con.Close();
         }
 
         private void buttonAjouterInter_Click(object sender, EventArgs e)
         {
-            con.Open();
-            SqlCommand check_materiel = new SqlCommand("SELECT COUNT(*) FROM INTERVENTION WHERE ID_MATERIEL = @ID_MATERIEL", con);
-            check_materiel.Parameters.AddWithValue("@ID_MATERIEL", comboBoxInter.Text);
-            int UserExist = (int)check_materiel.ExecuteScalar();
-            con.Close();
 
-            if (UserExist > 0)
-            {
-                MessageBox.Show("Cette intervention est déjà en cours");
-            }
-            else
-            {
-
-                if (comboBoxInter.SelectedItem != null && textBoxCommentaire.Text != "" 
+            if (comboBoxInter.SelectedItem != null && textBoxCommentaire.Text != ""
                     && textBoxCommentaire.Text != "" && textBoxTechnicien.Text != "")
+            {
+                Inter selectedIntervention = (Inter)comboBoxInter.SelectedItem;
+                int idMateriel = selectedIntervention.ID;
+
+                con.Open();
+                SqlCommand check_materiel = new SqlCommand("SELECT COUNT(*) FROM INTERVENTION WHERE ID_MATERIEL = @ID_MATERIEL", con);
+                check_materiel.Parameters.AddWithValue("@ID_MATERIEL", idMateriel);
+                int UserExist = (int)check_materiel.ExecuteScalar();
+
+                con.Close();
+
+                if (UserExist > 0)
                 {
-                    Intervention selectedClient = (Intervention)comboBoxMat.SelectedItem;
-                    int idMateriel = selectedClient.ID;
+                    MessageBox.Show("Cette intervention est déjà en cours");
+                }
+                else
+                {
 
                     con.Open();
-                    cmd = new SqlCommand("insert into INTERVENTION(Date_Inter,Commentaire,Technicien,ID_MATERIEL) values" +
-                        "('" +dateTimePickerInter.Value +
+                    cmd = new SqlCommand("insert into INTERVENTION(Date_Inter,Commentaire,Technicien,ID_MATERIEL,Site,Statut) values" +
+                        "('" + dateTimePickerInter.Value +
                         "','" + textBoxCommentaire.Text +
                         "','" + textBoxTechnicien.Text +
-                        "','" + idMateriel + "')", con);
+                        "','" + idMateriel +
+                        "','" + textBoxSite.Text +
+                        "','" + comboBoxStatut.Text +"')", con);
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Intervention ajoutée");
                     con.Close();
                     showdataIntervention();
                 }
-                else
-                {
-                    MessageBox.Show("Veuillez remplir tous les champs");
-                }
-                
+            }
+            else
+            {
+                MessageBox.Show("Veuillez remplir tous les champs");
+            }
+            
+        }
+        
+
+
+        private void buttonModifierInter_Click(object sender, EventArgs e)
+        {
+            if (comboBoxInter.SelectedItem != null && textBoxCommentaire.Text != ""
+                && textBoxCommentaire.Text != "" && textBoxTechnicien.Text != "" 
+                && textBoxSite.Text !="" && comboBoxStatut.SelectedItem != null)
+            {
+                Inter selectedClient = (Inter)comboBoxInter.SelectedItem;
+                int idMateriel = selectedClient.ID;
+
+                con.Open();
+                cmd = new SqlCommand("update INTERVENTION set Date_Inter='" + dateTimePickerInter.Value +
+                    "',Commentaire='" + textBoxCommentaire.Text +
+                    "',Technicien='" + textBoxTechnicien.Text +
+                    "',ID_MATERIEL='" + idMateriel +
+                    "',Site='" + textBoxSite.Text +
+                    "',Statut='" + comboBoxStatut.SelectedItem +
+                    "' where ID_INTER='" + idIntervention + "'", con);
+                cmd.ExecuteNonQuery();
+                MessageBox.Show("Intervention modifiée");
+                con.Close();
+                showdataIntervention();
+            }
+            else
+            {
+                MessageBox.Show("Veuillez remplir tous les champs");
             }
         }
+
+        private void buttonSupprimerInter_Click(object sender, EventArgs e)
+        {
+            con.Open();
+            cmd = new SqlCommand("delete from INTERVENTION where ID_INTER='" + idIntervention + "'", con);
+            cmd.ExecuteNonQuery();
+            MessageBox.Show("Intervention supprimée");
+            con.Close();
+            showdataIntervention();
+        }
+        
     }
-    
+
+    /*  
+        -----------------------------------------------------------------------------------------------
+        ------------------------------------ END INTERVENTION PART ------------------------------------ 
+        -----------------------------------------------------------------------------------------------
+    */ 
 }

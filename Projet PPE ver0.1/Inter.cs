@@ -6,23 +6,25 @@ using System.Threading.Tasks;
 
 namespace Projet_PPE_ver0._1
 {
-    internal class Intervention
+
+    internal class Inter
     {
-        public int ID;
-        public string nom, NoSerie, MTBF, type, marque;
+        public int ID, ID_Client, MTBF;
+        public string nom, NoSerie, type, marque;
         public DateTime dateInstall;
 
-        public Intervention(int id, string nom, string NoSerie, string MTBF, string type, string marque, DateTime dateInstall)
+
+        public Inter(int id, string nom, string NoSerie, DateTime dateInstall, int MTBF, string type, string marque, int ID_Client)
         {
             this.ID = id;
             this.nom = nom;
             this.NoSerie = NoSerie;
+            this.dateInstall = dateInstall;
             this.MTBF = MTBF;
             this.type = type;
             this.marque = marque;
-            this.dateInstall = dateInstall;
+            this.ID_Client = ID_Client;
         }
-        
 
         public override string ToString()
         {

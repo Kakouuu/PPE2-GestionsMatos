@@ -58,7 +58,7 @@
     <Compile Include="FormPanel.Designer.cs">
       <DependentUpon>FormPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Intervention.cs" />
+    <Compile Include="Inter.cs" />
     <Compile Include="Materiel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
