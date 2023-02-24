@@ -23,7 +23,7 @@ namespace Projet_PPE_ver0._1
         SqlDataAdapter adptIntervention;
         int idClient;
         int idMateriel;
-        int idIntervention;
+        int idIntervention; 
         public FormPanel()
         {
             InitializeComponent();
@@ -112,10 +112,8 @@ namespace Projet_PPE_ver0._1
                 , "Supprimer un client",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {   
                 con.Open();
-                // delete materiel linked to client
                 cmd = new SqlCommand("delete from MATERIEL where ID_CLIENT='" + idClient + "'", con);
                 cmd.ExecuteNonQuery();
-                // delete client
                 cmd = new SqlCommand("delete from CLIENT where ID_CLIENT='" + idClient + "'", con);
                 cmd.ExecuteNonQuery();
                 textBoxNomClient.Text = "";
@@ -303,8 +301,6 @@ namespace Projet_PPE_ver0._1
 
         private void buttonAjouterMateriel_Click(object sender, EventArgs e)
         {
-            // check if fields already exist
-
             con.Open();
             SqlCommand check_NoSerie = new SqlCommand("SELECT COUNT(*) FROM MATERIEL WHERE NoSerie = @NoSerie", con);
             check_NoSerie.Parameters.AddWithValue("@NoSerie", textBoxNoSerieMateriel.Text);
