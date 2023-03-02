@@ -33,6 +33,7 @@ namespace Projet_PPE_ver0._1
             fillCombo();
             fillComboInter();
             fillComboStatut();
+            MTBFVerif();
         }
         private void FormPanel_Load(object sender, EventArgs e)
         {   
@@ -47,7 +48,38 @@ namespace Projet_PPE_ver0._1
             ------------------------------------ START CLIENT PART ------------------------------------ 
             -----------------------------------------------------------------------------------------------
         */
-        public void showdataClient()
+
+        void MTBFVerif() // #MTBFVERIF
+        {
+            con.Open();
+            cmd = new SqlCommand("SELECT m.Nom as NomMat, c.Nom as NomClient, m.Type as Type, i.Site as Site, " +
+                "DATEDIFF(day, GETDATE(), DATEADD(month, m.MTBF, m.Date_Install)) as 'Jours_restants' " +
+                "FROM MATERIEL m " +
+                "JOIN CLIENT c ON m.ID_CLIENT = c.ID_CLIENT " +
+                "LEFT JOIN INTERVENTION i ON m.ID_Materiel = i.ID_Materiel " +
+                "WHERE m.Date_Install IS NOT NULL ", con);
+
+            // SELECT m.Nom as NomMat, c.Nom as NomClient, m.Type as Type, i.Site as Site, DATEDIFF(day, GETDATE(),
+            // DATEADD(month, m.MTBF, m.Date_Install)) as 'Jours_restants' FROM MATERIEL m JOIN CLIENT c ON m.ID_CLIENT = c.ID_CLIENT
+            // LEFT JOIN INTERVENTION i ON m.ID_Materiel = i.ID_Materiel WHERE m.Date_Install IS NOT NULL
+            
+            SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                string NomMat = reader["NomMat"].ToString();
+                int JoursRestant = Convert.ToInt32(reader["Jours_restants"]);
+
+                if (JoursRestant <= 15)
+                {
+                    string message = string.Format("Le matériel {0} est en panne depuis plus de {1} jours", NomMat, JoursRestant);
+                    MessageBox.Show(message, "Alerte", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+            }
+            con.Close();
+        }
+        
+        public void showdataClient() // #SHOWDATACLIENT
         {
             con.Open();
             adptClient = new SqlDataAdapter("Select ID_CLIENT as ID,Nom as Nom,Adresse as Adresse,Mail as Mail,Tel as Téléphone from CLIENT", con);
@@ -70,8 +102,8 @@ namespace Projet_PPE_ver0._1
             fillComboInter();
             fillComboStatut();
         }
-            
-        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e) //#DATAGRIDCLIENT
         {
             if (e.RowIndex == -1)
             {
@@ -102,10 +134,9 @@ namespace Projet_PPE_ver0._1
                 }
             }
         }
-        private void buttonSupprimer_Click(object sender, EventArgs e)
+        private void buttonSupprimer_Click(object sender, EventArgs e) // #SUPPRIMERCLIENT
         {
-
-
+                
 
             if (MessageBox.Show("Voulez vous vraiment supprimer ce client ?" + "\n" +
                 "Attention, toutes les interventions et matériaux liées à ce client seront supprimées"
@@ -126,7 +157,7 @@ namespace Projet_PPE_ver0._1
             }
         }
 
-        private void buttonAjouter_Click(object sender, EventArgs e)
+        private void buttonAjouter_Click(object sender, EventArgs e) // #AJOUTERCLIENT
         {
             // check if fields already exist
             
@@ -141,20 +172,29 @@ namespace Projet_PPE_ver0._1
             }
             else
             {
-                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" 
+                if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != ""
                     && textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
                 {
-                    Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
-                    con.Open();
-                    cmd = new SqlCommand("insert into CLIENT(Nom,Adresse,Mail,Tel) values" +
-                        "('" + textBoxNomClient.Text +
-                        "','" + textBoxAdresseClient.Text +
-                        "','" + textBoxMailClient.Text +
-                        "','" + textBoxTelClient.Text + "')", con);
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Client ajouté");
-                    con.Close();
-                    showdataClient();
+
+                    try
+                    {
+                        Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
+                        con.Open();
+                        cmd = new SqlCommand("insert into CLIENT(Nom,Adresse,Mail,Tel) values" +
+                            "('" + textBoxNomClient.Text +
+                            "','" + textBoxAdresseClient.Text +
+                            "','" + textBoxMailClient.Text +
+                            "','" + textBoxTelClient.Text + "')", con);
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Client ajouté");
+                        con.Close();
+                        showdataClient();
+                    }
+
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
                 else
                 {
@@ -163,14 +203,13 @@ namespace Projet_PPE_ver0._1
             }
         }
 
-        private void buttonModifier_Click(object sender, EventArgs e)
+        private void buttonModifier_Click(object sender, EventArgs e) // #MODIFIERCLIENT
         {
-
-            // check if fields changed
             
                 if (textBoxNomClient.Text != "" && textBoxAdresseClient.Text != "" 
                 && textBoxMailClient.Text != "" && textBoxTelClient.Text != "")
                 {
+                try { 
                     con.Open();
                     cmd = new SqlCommand("update CLIENT set Nom='" + textBoxNomClient.Text + "',Adresse='" +
                         textBoxAdresseClient.Text + "',Mail='" + textBoxMailClient.Text + "',Tel='" +
@@ -180,7 +219,13 @@ namespace Projet_PPE_ver0._1
                     MessageBox.Show("Les informations ont bien été modifié");
                     con.Close();
                     showdataClient();
+                    }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
+
+            }
                 else
                 {
                     MessageBox.Show("Veuillez remplir tous les champs");
@@ -319,19 +364,28 @@ namespace Projet_PPE_ver0._1
                     &&  textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != "" 
                     && textBoxMarqueMateriel.Text != "" && comboBoxMat.SelectedItem != null)
                 {
-                    Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
-                    int idClient = selectedClient.ID;
 
-                    con.Open();
-                    cmd = new SqlCommand("insert into MATERIEL(Nom,NoSerie,Date_Install,MTBF,Type,Marque,ID_CLIENT) values('" +
-                        textBoxNomMateriel.Text + "','" + textBoxNoSerieMateriel.Text + "','" +
-                        dateTimePicker1.Value + "','" +  textBoxMTBFMateriel.Text + "','" +
-                        textBoxTypeMateriel.Text + "','" + textBoxMarqueMateriel.Text + "','" + idClient + "')", con);
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Materiel ajouté");
-                    con.Close();
-                    showdataMateriel();
+                    try
+                    {
+                        Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
+                        int idClient = selectedClient.ID;
+
+                        con.Open();
+                        cmd = new SqlCommand("insert into MATERIEL(Nom,NoSerie,Date_Install,MTBF,Type,Marque,ID_CLIENT) values('" +
+                            textBoxNomMateriel.Text + "','" + textBoxNoSerieMateriel.Text + "','" +
+                            dateTimePicker1.Value + "','" + textBoxMTBFMateriel.Text + "','" +
+                            textBoxTypeMateriel.Text + "','" + textBoxMarqueMateriel.Text + "','" + idClient + "')", con);
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Materiel ajouté");
+                        con.Close();
+                        showdataMateriel();
+                    
+                    }
+                    catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
+            }
                 else
                 {
                     MessageBox.Show("Veuillez remplir tous les champs");
@@ -368,16 +422,18 @@ namespace Projet_PPE_ver0._1
                 && textBoxMTBFMateriel.Text != "" && textBoxTypeMateriel.Text != ""
                 && textBoxMarqueMateriel.Text != "" && comboBoxMat.SelectedItem != null)
                 {
-                
-                Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
-                int idClient = selectedClient.ID;
-                
-                con.Open();
+                try
+                {
+                    Materiel selectedClient = (Materiel)comboBoxMat.SelectedItem;
+                    int idClient = selectedClient.ID;
+
+                    con.Open();
                     cmd = new SqlCommand
                     ("update MATERIEL set Nom='" + textBoxNomMateriel.Text +
                     "',NoSerie='" + textBoxNoSerieMateriel.Text +
+                    "',Date_Install='" + dateTimePicker1.Value +
                     "',MTBF='" + textBoxMTBFMateriel.Text +
-                    "',Type='" + textBoxTypeMateriel.Text + 
+                    "',Type='" + textBoxTypeMateriel.Text +
                     "',Marque='" + textBoxMarqueMateriel.Text +
                     "',ID_CLIENT='" + idClient +
                     "' where ID_MATERIEL='" + idMateriel + "'", con);
@@ -386,6 +442,11 @@ namespace Projet_PPE_ver0._1
                     con.Close();
                     showdataMateriel();
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
                 else
                 {
                     MessageBox.Show("Veuillez remplir tous les champs");
@@ -525,19 +586,26 @@ namespace Projet_PPE_ver0._1
                 }
                 else
                 {
+                    try
+                    {
 
-                    con.Open();
-                    cmd = new SqlCommand("insert into INTERVENTION(Date_Inter,Commentaire,Technicien,ID_MATERIEL,Site,Statut) values" +
-                        "('" + dateTimePickerInter.Value +
-                        "','" + textBoxCommentaire.Text +
-                        "','" + textBoxTechnicien.Text +
-                        "','" + idMateriel +
-                        "','" + textBoxSite.Text +
-                        "','" + comboBoxStatut.Text +"')", con);
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Intervention ajoutée");
-                    con.Close();
-                    showdataIntervention();
+                        con.Open();
+                        cmd = new SqlCommand("insert into INTERVENTION(Date_Inter,Commentaire,Technicien,ID_MATERIEL,Site,Statut) values" +
+                            "('" + dateTimePickerInter.Value +
+                            "','" + textBoxCommentaire.Text +
+                            "','" + textBoxTechnicien.Text +
+                            "','" + idMateriel +
+                            "','" + textBoxSite.Text +
+                            "','" + comboBoxStatut.Text + "')", con);
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Intervention ajoutée");
+                        con.Close();
+                        showdataIntervention();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
                 }
             }
             else
@@ -555,21 +623,44 @@ namespace Projet_PPE_ver0._1
                 && textBoxCommentaire.Text != "" && textBoxTechnicien.Text != "" 
                 && textBoxSite.Text !="" && comboBoxStatut.SelectedItem != null)
             {
-                Inter selectedClient = (Inter)comboBoxInter.SelectedItem;
-                int idMateriel = selectedClient.ID;
+                try
+                {
+                    Inter selectedClient = (Inter)comboBoxInter.SelectedItem;
+                    int idMateriel = selectedClient.ID;
 
-                con.Open();
-                cmd = new SqlCommand("update INTERVENTION set Date_Inter='" + dateTimePickerInter.Value +
-                    "',Commentaire='" + textBoxCommentaire.Text +
-                    "',Technicien='" + textBoxTechnicien.Text +
-                    "',ID_MATERIEL='" + idMateriel +
-                    "',Site='" + textBoxSite.Text +
-                    "',Statut='" + comboBoxStatut.SelectedItem +
-                    "' where ID_INTER='" + idIntervention + "'", con);
-                cmd.ExecuteNonQuery();
-                MessageBox.Show("Intervention modifiée");
-                con.Close();
-                showdataIntervention();
+                    string Statut = comboBoxStatut.SelectedItem.ToString();
+
+                    
+                    con.Open();
+                    cmd = new SqlCommand("update INTERVENTION set Date_Inter='" + dateTimePickerInter.Value +
+                        "',Commentaire='" + textBoxCommentaire.Text +
+                        "',Technicien='" + textBoxTechnicien.Text +
+                        "',ID_MATERIEL='" + idMateriel +
+                        "',Site='" + textBoxSite.Text +
+                        "',Statut='" + comboBoxStatut.SelectedItem +
+                        "' where ID_INTER='" + idIntervention + "'", con);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Intervention modifiée");
+
+
+                    if (Statut == "Terminée")
+                    {
+                        DateTime currentDate = DateTime.Now;
+                        cmd = new SqlCommand("UPDATE MATERIEL SET Date_Inter = @CurrentDate WHERE ID_MATERIEL = @ID_MATERIEL ");
+                        cmd.Parameters.AddWithValue("@ID_MATERIEL", idMateriel);
+                        cmd.Parameters.AddWithValue("@CurrentDate", currentDate.ToString("yyyy-MM-dd"));
+
+                        cmd.ExecuteNonQuery();
+                        
+                    }
+
+                    con.Close();
+                    showdataIntervention();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             else
             {
