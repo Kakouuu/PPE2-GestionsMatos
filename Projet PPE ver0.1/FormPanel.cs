@@ -27,13 +27,14 @@ namespace Projet_PPE_ver0._1
         public FormPanel()
         {
             InitializeComponent();
+            MTBFVerif();
             showdataClient();
             showdataMateriel();
             showdataIntervention();
             fillCombo();
             fillComboInter();
             fillComboStatut();
-            MTBFVerif();
+            
         }
         private void FormPanel_Load(object sender, EventArgs e)
         {   
@@ -52,7 +53,7 @@ namespace Projet_PPE_ver0._1
         void MTBFVerif() // #MTBFVERIF
         {
             con.Open();
-            cmd = new SqlCommand("SELECT m.Nom as NomMat, c.Nom as NomClient, m.Type as Type, i.Site as Site, " +
+            cmd = new SqlCommand("SELECT m.Nom as NomMat, c.Nom as NomClient, m.Type, i.Site, " +
                 "DATEDIFF(day, GETDATE(), DATEADD(month, m.MTBF, m.Date_Install)) as 'Jours_restants' " +
                 "FROM MATERIEL m " +
                 "JOIN CLIENT c ON m.ID_CLIENT = c.ID_CLIENT " +
@@ -71,6 +72,7 @@ namespace Projet_PPE_ver0._1
 
                 if (JoursRestant <= 15)
                 {
+
                     string message = string.Format("Le matériel {0} est en panne depuis plus de {1} jours", NomMat, JoursRestant);
                     MessageBox.Show(message, "Alerte", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
@@ -82,7 +84,7 @@ namespace Projet_PPE_ver0._1
         public void showdataClient() // #SHOWDATACLIENT
         {
             con.Open();
-            adptClient = new SqlDataAdapter("Select ID_CLIENT as ID,Nom as Nom,Adresse as Adresse,Mail as Mail,Tel as Téléphone from CLIENT", con);
+            adptClient = new SqlDataAdapter("Select ID_CLIENT as ID,Nom,Adresse,Mail,Tel as Téléphone from CLIENT", con);
             dtClient = new DataTable();
             adptClient.Fill(dtClient);
             dataGridViewClients.DataSource = dtClient;
@@ -143,8 +145,8 @@ namespace Projet_PPE_ver0._1
                 , "Supprimer un client",MessageBoxButtons.YesNo) == DialogResult.Yes)
             {   
                 con.Open();
-                cmd = new SqlCommand("delete from MATERIEL where ID_CLIENT='" + idClient + "'", con);
-                cmd.ExecuteNonQuery();
+                //cmd = new SqlCommand("delete from MATERIEL where ID_CLIENT='" + idClient + "'", con);
+                //cmd.ExecuteNonQuery();
                 cmd = new SqlCommand("delete from CLIENT where ID_CLIENT='" + idClient + "'", con);
                 cmd.ExecuteNonQuery();
                 textBoxNomClient.Text = "";
@@ -274,7 +276,8 @@ namespace Projet_PPE_ver0._1
         public void fillCombo()
         {
             con.Open();
-            cmd = new SqlCommand("SELECT * FROM CLIENT", con);
+            cmd = new SqlCommand("ClientsList", con);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.ExecuteNonQuery();
 
             DataTable dt = new DataTable();
@@ -301,8 +304,8 @@ namespace Projet_PPE_ver0._1
         public void showdataMateriel()
         {
             con.Open();
-            adptMateriel = new SqlDataAdapter("Select m.ID_MATERIEL as ID_MAT,m.Nom as Nom,m.NoSerie as " +
-                "NoSerie,m.Date_Install as Date_Install,m.MTBF as MTBF,m.Type as Type,m.Marque as Marque,c.Nom as Client from " +
+            adptMateriel = new SqlDataAdapter("Select m.ID_MATERIEL as ID_MAT,m.Nom,m.NoSerie, " +
+                "m.Date_Install,m.MTBF,m.Type,m.Marque,c.Nom as Client from " +
                 "MATERIEL m join CLIENT c on m.ID_CLIENT = c.ID_CLIENT", con);  
 
             dtMateriel = new DataTable();
@@ -474,12 +477,13 @@ namespace Projet_PPE_ver0._1
         public void showdataIntervention()
         {
             con.Open();
-            adptIntervention = new SqlDataAdapter("Select i.ID_INTER as ID_INTER,i.Date_Inter as Date_Inter," +
-                "i.Commentaire as Commentaire,i.Technicien as Technicien, i.Site as Site, i.Statut as Statut," +
+            adptIntervention = new SqlDataAdapter("Select i.ID_INTER as ID_INTER,i.Date_Inter," +
+                "i.Commentaire,i.Technicien, i.Site, i.Statut," +
                 "m.Nom as Materiel from INTERVENTION i join MATERIEL m on i.ID_MATERIEL = m.ID_MATERIEL", con);
             dtIntervention = new DataTable();
             adptIntervention.Fill(dtIntervention);
             dataGridViewIntervention.DataSource = dtIntervention;
+
             con.Close();
         }
         private void buttonRefreshInter_Click(object sender, EventArgs e)
@@ -641,20 +645,19 @@ namespace Projet_PPE_ver0._1
                         "' where ID_INTER='" + idIntervention + "'", con);
                     cmd.ExecuteNonQuery();
                     MessageBox.Show("Intervention modifiée");
-
+                    con.Close();
 
                     if (Statut == "Terminée")
                     {
-                        DateTime currentDate = DateTime.Now;
-                        cmd = new SqlCommand("UPDATE MATERIEL SET Date_Inter = @CurrentDate WHERE ID_MATERIEL = @ID_MATERIEL ");
+                        con.Open();
+                        cmd = new SqlCommand("UPDATE MATERIEL SET Date_Install = GETDATE() WHERE ID_MATERIEL = @ID_MATERIEL ",con);
                         cmd.Parameters.AddWithValue("@ID_MATERIEL", idMateriel);
-                        cmd.Parameters.AddWithValue("@CurrentDate", currentDate.ToString("yyyy-MM-dd"));
 
                         cmd.ExecuteNonQuery();
-                        
+                        con.Close();
                     }
 
-                    con.Close();
+                    
                     showdataIntervention();
                 }
                 catch (Exception ex)
